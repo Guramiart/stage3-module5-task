@@ -1,0 +1,46 @@
+plugins {
+    id 'java-base'
+}
+
+wrapper {
+    gradleVersion = gradlewVersion
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    group = 'com.mjc.school'
+
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation "org.springframework:spring-context:$springVersion"
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        testImplementation "org.springframework.boot:spring-boot-starter-test:$springBootPluginVersion"
+        testImplementation "com.tngtech.archunit:archunit-junit5:$archUnitVersion"
+    }
+
+    configurations {
+        testImplementation {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs = [
+                "-Xlint:deprecation",
+                "-Xlint:unchecked",
+                "-parameters",
+        ]
+    }
+
+}
