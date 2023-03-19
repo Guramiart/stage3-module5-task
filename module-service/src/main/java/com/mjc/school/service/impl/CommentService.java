@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CommentService
-        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, CommentRepository, Comment, CommentMapper> {
+        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, Comment> {
 
     @Autowired
     protected CommentService(CommentRepository repository, CommentMapper mapper) {

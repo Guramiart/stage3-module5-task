@@ -9,13 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public abstract class AbstractService<T, R, K, L extends BaseRepository<M, K>, M extends BaseEntity<K>, N extends BaseMapper<T, R, M>>
-        implements BaseService<T, R, K> {
+public abstract class AbstractService<T, R, K, M extends BaseEntity<K>> implements BaseService<T, R, K> {
 
-    private final L repository;
-    private final N mapper;
+    private final BaseRepository<M, K> repository;
+    private final BaseMapper<T, R, M> mapper;
 
-    protected AbstractService(L repository, N mapper) {
+    protected AbstractService(BaseRepository<M, K> repository, BaseMapper<T, R, M> mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }

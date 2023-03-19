@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthorService
-        extends AbstractService<AuthorDtoRequest, AuthorDtoResponse, Long, AuthorRepository, Author, AuthorMapper> {
+        extends AbstractService<AuthorDtoRequest, AuthorDtoResponse, Long, Author> {
 
     @Autowired
     protected AuthorService(AuthorRepository repository, AuthorMapper mapper) {

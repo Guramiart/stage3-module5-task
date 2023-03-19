@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NewsService
-        extends AbstractService<NewsDtoRequest, NewsDtoResponse, Long, NewsRepository, News, NewsMapper> {
+        extends AbstractService<NewsDtoRequest, NewsDtoResponse, Long, News> {
 
     @Autowired
     protected NewsService(NewsRepository repository, NewsMapper mapper) {

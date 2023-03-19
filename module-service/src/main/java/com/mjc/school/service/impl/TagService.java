@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, Long, TagRepository, Tag, TagMapper> {
+public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, Long, Tag> {
 
     @Autowired
     protected TagService(TagRepository repository, TagMapper mapper) {
