@@ -6,15 +6,17 @@ import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
 import com.mjc.school.service.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(
         value = PathConstant.COMMENT_PATH,
         produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-public class CommentController extends AbstractController<CommentDtoRequest, CommentDtoResponse, Long, CommentService> {
+public class CommentController extends AbstractController<CommentDtoRequest, CommentDtoResponse, Long, CommentService, CommentDtoRequest> {
 
     @Autowired
     protected CommentController(CommentService service) {

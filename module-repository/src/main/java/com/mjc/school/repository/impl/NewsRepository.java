@@ -8,11 +8,21 @@ import org.springframework.stereotype.Repository;
 public class NewsRepository extends AbstractRepository<News, Long> {
     @Override
     protected void updateEntity(News prevState, News nextState) {
-        prevState.setTitle(nextState.getTitle());
-        prevState.setContent(nextState.getContent());
-        prevState.setAuthor(nextState.getAuthor());
-        prevState.setTags(nextState.getTags());
-        prevState.setComments(nextState.getComments());
+        if(nextState.getTitle() != null && !nextState.getTitle().isBlank()) {
+            prevState.setTitle(nextState.getTitle());
+        }
+        if(nextState.getContent() != null && !nextState.getContent().isBlank()) {
+            prevState.setContent(nextState.getContent());
+        }
+        if(nextState.getAuthor() != null && !nextState.getAuthor().getName().isBlank()) {
+            prevState.setAuthor(nextState.getAuthor());
+        }
+        if(nextState.getTags() != null && !nextState.getTags().isEmpty()) {
+            prevState.setTags(nextState.getTags());
+        }
+        if(nextState.getComments() != null && !nextState.getComments().isEmpty()) {
+            prevState.setComments(nextState.getComments());
+        }
     }
 
 }

@@ -6,10 +6,15 @@ import com.mjc.school.service.dto.TagDtoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
-public interface TagMapper extends BaseMapper<TagDtoRequest, TagDtoResponse, Tag> {
+import java.util.List;
 
-    @Override
+@Mapper(componentModel = "spring")
+public interface TagMapper {
+
+    List<TagDtoResponse> modelListToDto(List<Tag> modelList);
+
+    TagDtoResponse modelToDto(Tag model);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "news", ignore = true)
     Tag dtoToModel(TagDtoRequest dto);

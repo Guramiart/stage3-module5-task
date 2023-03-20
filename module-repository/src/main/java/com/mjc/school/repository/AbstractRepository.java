@@ -25,13 +25,13 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
 
     @Override
     public Page<T> readAll(Pageable pageable) {
-        Query query = em.createQuery("SELECT e FROM " + entity + " e");
+        Query query = em.createQuery("SELECT e FROM " + entity.getSimpleName() + " e");
         int pageNumber = pageable.getPageNumber();
         int pageSize = pageable.getPageSize();
         query.setFirstResult(pageNumber * pageSize);
         query.setMaxResults(pageSize);
         List<T> modelList = query.getResultList();
-        Query queryCount = em.createQuery("SELECT COUNT(*) FROM " + entity);
+        Query queryCount = em.createQuery("SELECT COUNT(*) FROM " + entity.getSimpleName());
         long count = (long) queryCount.getSingleResult();
         return new PageImpl<>(modelList, pageable, count);
     }
@@ -73,9 +73,9 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
     @Override
     public boolean existById(K id) {
         Query query = em
-                .createQuery("SELECT COUNT (*) FROM " + entity.getSimpleName() + "e WHERE e.id = ?1", entity)
+                .createQuery("SELECT COUNT (*) FROM " + entity.getSimpleName() + " e WHERE e.id = ?1")
                 .setParameter(1, id);
-        return query.getFirstResult() > 0;
+        return (Long) query.getSingleResult() > 0;
     }
 
     @Override

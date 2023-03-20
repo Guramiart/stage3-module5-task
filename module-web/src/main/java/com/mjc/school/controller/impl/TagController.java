@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(
         value = PathConstant.TAG_PATH,
         produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-public class TagController extends AbstractController<TagDtoRequest, TagDtoResponse, Long, TagService> {
+public class TagController extends AbstractController<TagDtoRequest, TagDtoResponse, Long, TagService, TagDtoRequest> {
 
     @Autowired
     protected TagController(TagService service) {

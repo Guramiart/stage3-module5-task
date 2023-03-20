@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K>> implements BaseController<T, R, K> {
+public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K, U>, U> implements BaseController<T, R, K, U> {
 
-    private final S service;
+    private final BaseService<T, R, K, U> service;
 
     protected AbstractController(S service) {
         this.service = service;
@@ -40,7 +40,7 @@ public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K>
     @Override
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public R update(@PathVariable K id, @RequestBody T updateRequest) {
+    public R update(@PathVariable K id, @RequestBody U updateRequest) {
         return service.update(id, updateRequest);
     }
 

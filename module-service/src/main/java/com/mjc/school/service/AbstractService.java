@@ -3,55 +3,55 @@ package com.mjc.school.service;
 import com.mjc.school.repository.BaseEntity;
 import com.mjc.school.repository.BaseRepository;
 import com.mjc.school.service.exceptions.NotFoundException;
-import com.mjc.school.service.mapper.BaseMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public abstract class AbstractService<T, R, K, M extends BaseEntity<K>> implements BaseService<T, R, K> {
+public abstract class AbstractService<T, R, K, M extends BaseEntity<K>, U> implements BaseService<T, R, K, U> {
 
     private final BaseRepository<M, K> repository;
-    private final BaseMapper<T, R, M> mapper;
 
-    protected AbstractService(BaseRepository<M, K> repository, BaseMapper<T, R, M> mapper) {
+    protected AbstractService(BaseRepository<M, K> repository) {
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     protected abstract String getErrorMessage();
+    protected abstract List<R> modelListToDto(List<M> modelList);
+    protected abstract R modelToDto(M model);
+    protected abstract M dtoToModel(T dto);
+    protected abstract M updateDtoToModel(U dto);
 
     @Override
     @Transactional(readOnly = true)
     public List<R> readAll(Pageable pageable) {
-        return mapper.modelListToDto(repository.readAll(pageable).getContent());
+        return modelListToDto(repository.readAll(pageable).getContent());
     }
 
     @Override
     @Transactional(readOnly = true)
     public R readById(K id) {
-        repository.readById(id)
-                .map(mapper::modelToDto)
+        return repository.readById(id)
+                .map(this::modelToDto)
                 .orElseThrow(() -> {
                     throw new NotFoundException(String.format(getErrorMessage(), id));
                 });
-        return null;
     }
 
     @Override
     @Transactional
     public R create(T createRequest) {
-        M model = repository.create(mapper.dtoToModel(createRequest));
-        return mapper.modelToDto(model);
+        M model = repository.create(dtoToModel(createRequest));
+        return modelToDto(model);
     }
 
     @Override
     @Transactional
-    public R update(K id, T updateRequest) {
+    public R update(K id, U updateRequest) {
         if(repository.existById(id)) {
-            M model = mapper.dtoToModel(updateRequest);
+            M model = updateDtoToModel(updateRequest);
             model.setId(id);
-            return mapper.modelToDto(repository.update(model));
+            return modelToDto(repository.update(model));
         } else {
             throw new NotFoundException(String.format(getErrorMessage(), id));
         }

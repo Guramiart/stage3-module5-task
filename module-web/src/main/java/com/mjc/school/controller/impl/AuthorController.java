@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(
         value = PathConstant.AUTHOR_PATH,
         produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-public class AuthorController extends AbstractController<AuthorDtoRequest, AuthorDtoResponse, Long, AuthorService> {
+public class AuthorController extends AbstractController<AuthorDtoRequest, AuthorDtoResponse, Long, AuthorService, AuthorDtoRequest> {
 
     @Autowired
     protected AuthorController(AuthorService service) {

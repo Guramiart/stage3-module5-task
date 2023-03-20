@@ -19,7 +19,7 @@ import java.util.Objects;
 public class Tag implements BaseEntity<Long> {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "name", unique = true)

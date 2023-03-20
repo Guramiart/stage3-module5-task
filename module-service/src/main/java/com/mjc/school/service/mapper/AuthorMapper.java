@@ -6,8 +6,14 @@ import com.mjc.school.service.dto.AuthorDtoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
-public interface AuthorMapper extends BaseMapper<AuthorDtoRequest, AuthorDtoResponse, Author> {
+public interface AuthorMapper {
+
+    List<AuthorDtoResponse> modelListToDto(List<Author> modelList);
+
+    AuthorDtoResponse modelToDto(Author model);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "news", ignore = true)
