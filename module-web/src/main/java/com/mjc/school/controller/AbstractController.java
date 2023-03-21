@@ -1,6 +1,7 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.service.BaseService;
+import com.mjc.school.service.dto.SearchFilterDtoRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -49,5 +50,10 @@ public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K,
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable K id) {
         service.deleteById(id);
+    }
+
+    @GetMapping(value = "/search")
+    public void readBySearchCriteria(SearchFilterDtoRequest searchDtoRequest) {
+        service.readBySearchCriteria(searchDtoRequest);
     }
 }

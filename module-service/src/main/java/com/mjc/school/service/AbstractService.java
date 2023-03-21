@@ -2,8 +2,14 @@ package com.mjc.school.service;
 
 import com.mjc.school.repository.BaseEntity;
 import com.mjc.school.repository.BaseRepository;
+import com.mjc.school.repository.filter.EntitySpecification;
+import com.mjc.school.repository.filter.EntitySpecificationBuilder;
+import com.mjc.school.service.dto.SearchFilter;
+import com.mjc.school.service.dto.SearchFilterDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
+import com.mjc.school.service.mapper.BaseSearchMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -11,6 +17,7 @@ import java.util.List;
 public abstract class AbstractService<T, R, K, M extends BaseEntity<K>, U> implements BaseService<T, R, K, U> {
 
     private final BaseRepository<M, K> repository;
+    private BaseSearchMapper searchMapper;
 
     protected AbstractService(BaseRepository<M, K> repository) {
         this.repository = repository;
@@ -65,5 +72,15 @@ public abstract class AbstractService<T, R, K, M extends BaseEntity<K>, U> imple
         } else {
             throw new NotFoundException(String.format(getErrorMessage(), id));
         }
+    }
+
+    @Override
+    @Transactional
+    public void readBySearchCriteria(SearchFilterDtoRequest searchFilterDtoRequest) {
+        SearchFilter searchFilter = searchMapper.mapSearchCriteria(searchFilterDtoRequest);
+        Specification<Object> specification = new EntitySpecificationBuilder<>()
+                .with(searchFilter.searchCriteria())
+                .build();
+        repository.readBySearchCriteria(specification);
     }
 }

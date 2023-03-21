@@ -3,10 +3,17 @@ package com.mjc.school.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 import java.util.Optional;
@@ -81,5 +88,19 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
     @Override
     public T getReference(K id) {
         return em.getReference(entity, id);
+    }
+
+    @Override
+    @Transactional
+    public List<T> readBySearchCriteria(Specification<Object> specification) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entity);
+        final Root root = criteriaQuery.from(entity);
+        if (specification != null) {
+            Predicate predicate = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
+            criteriaQuery.where(predicate);
+        }
+        TypedQuery<T> typedQuery = em.createQuery(criteriaQuery);
+        return typedQuery.getResultList();
     }
 }
