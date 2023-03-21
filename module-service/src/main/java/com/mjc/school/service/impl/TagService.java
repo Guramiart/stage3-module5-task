@@ -1,24 +1,31 @@
 package com.mjc.school.service.impl;
 
+import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.impl.TagRepository;
 import com.mjc.school.repository.model.Tag;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
+import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, Long, Tag, TagDtoRequest> {
 
+    private final NewsRepository newsRepository;
+    private final TagRepository tagRepository;
     private final TagMapper mapper;
     @Autowired
-    public TagService(TagRepository repository, TagMapper mapper) {
-        super(repository);
+    public TagService(NewsRepository newsRepository, TagRepository tagRepository, TagMapper mapper) {
+        super(tagRepository);
+        this.newsRepository = newsRepository;
+        this.tagRepository = tagRepository;
         this.mapper = mapper;
     }
 
@@ -45,6 +52,22 @@ public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, L
     @Override
     protected Tag updateDtoToModel(TagDtoRequest dto) {
         return mapper.dtoToModel(dto);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TagDtoResponse> readByNewsId(Long newsId) {
+        if(!newsRepository.existById(newsId)) {
+            throw new NotFoundException(String.format(
+                    ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST.getErrorMessage(), newsId)
+            );
+        }
+        List<TagDtoResponse> tags = mapper.modelListToDto(tagRepository.readByNewsId(newsId));
+        if(tags.isEmpty()) {
+            throw new NotFoundException(String.format(
+                    ServiceErrorCode.TAG_DOES_NOT_EXIST_FOR_NEWS_ID.getErrorMessage(), newsId
+            ));
+        }
+        return tags;
     }
 
 }

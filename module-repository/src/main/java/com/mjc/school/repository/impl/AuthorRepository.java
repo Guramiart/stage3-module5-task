@@ -29,4 +29,15 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
         }
     }
 
+    public Optional<Author> readByNewsId(Long newsId) {
+        TypedQuery<Author> query = em.createQuery(
+                "SELECT a FROM Author a INNER JOIN a.news n WHERE n.id =: newsId", Author.class
+        ).setParameter("newsId", newsId);
+        try {
+            return Optional.of(query.getSingleResult());
+        } catch (NoResultException ex) {
+            return Optional.empty();
+        }
+    }
+
 }

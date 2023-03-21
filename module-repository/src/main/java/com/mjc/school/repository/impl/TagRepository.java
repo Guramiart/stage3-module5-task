@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,6 +30,13 @@ public class TagRepository extends AbstractRepository<Tag, Long> {
         } catch (NoResultException ex) {
             return Optional.empty();
         }
+    }
+
+    public List<Tag> readByNewsId(Long newsId) {
+        TypedQuery<Tag> query = em.createQuery(
+                "SELECT t FROM Tag t INNER JOIN t.news n WHERE n.id = :newsId", Tag.class
+        ).setParameter("newsId", newsId);
+        return query.getResultList();
     }
 
 }

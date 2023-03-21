@@ -11,6 +11,7 @@ import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class CommentService
     }
 
     @Override
+    @Transactional
     public CommentDtoResponse create(CommentDtoRequest createRequest) {
         if(newsRepository.existById(createRequest.newsId())) {
             return super.create(createRequest);
@@ -41,13 +43,20 @@ public class CommentService
         }
     }
 
+    @Transactional(readOnly = true)
     public List<CommentDtoResponse> readByNewsId(Long newsId) {
         if(!newsRepository.existById(newsId)) {
             throw new NotFoundException(
                     String.format(ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST.getErrorMessage(), newsId)
             );
         }
-        return commentRepository.readByNewsId(newsId).stream().map(mapper::modelToDto).collect(Collectors.toList());
+        List<CommentDtoResponse> responseList = mapper.modelListToDto(commentRepository.readByNewsId(newsId));
+        if(responseList.isEmpty()) {
+            throw new NotFoundException(String.format(
+                    ServiceErrorCode.COMMENT_DOES_NOT_EXIST_FOR_NEWS_ID.getErrorMessage(), newsId
+            ));
+        }
+        return responseList;
     }
     @Override
     protected String getErrorMessage() {
