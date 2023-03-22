@@ -15,6 +15,7 @@ public record CreateNewsDtoRequest(
         String content,
 
         @NotNull
+        @Size(min = 3, max = 15, message = "Author name length should be between from 3 to 15 chars")
         String author,
 
         List<String> tags,

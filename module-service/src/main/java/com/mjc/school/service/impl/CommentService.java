@@ -8,6 +8,7 @@ import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
+import com.mjc.school.service.mapper.BaseSearchMapper;
 import com.mjc.school.service.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,8 @@ public class CommentService
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
     @Autowired
-    public CommentService(NewsRepository newsRepository, CommentRepository commentRepository, CommentMapper mapper) {
-        super(commentRepository);
+    public CommentService(NewsRepository newsRepository, CommentRepository commentRepository, CommentMapper mapper, BaseSearchMapper searchMapper) {
+        super(commentRepository, searchMapper);
         this.newsRepository = newsRepository;
         this.commentRepository = commentRepository;
         this.mapper = mapper;

@@ -10,6 +10,7 @@ import com.mjc.school.service.dto.AuthorDtoResponse;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.AuthorMapper;
+import com.mjc.school.service.mapper.BaseSearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +26,9 @@ public class AuthorService
     private final AuthorMapper mapper;
 
     @Autowired
-    public AuthorService(NewsRepository newsRepository, AuthorRepository authorRepository, AuthorMapper mapper) {
-        super(authorRepository);
+    public AuthorService(NewsRepository newsRepository, AuthorRepository authorRepository,
+                         AuthorMapper mapper, BaseSearchMapper searchMapper) {
+        super(authorRepository, searchMapper);
         this.authorRepository = authorRepository;
         this.newsRepository = newsRepository;
         this.mapper = mapper;

@@ -5,8 +5,10 @@ import com.mjc.school.service.dto.SearchFilterDtoRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K, U>, U> implements BaseController<T, R, K, U> {
@@ -20,8 +22,8 @@ public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K,
     @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<R> readAll(Pageable pageable) {
-        return service.readAll(pageable);
+    public List<R> readAll(SearchFilterDtoRequest searchDtoRequest) {
+        return service.readAll(searchDtoRequest);
     }
 
     @Override
@@ -34,7 +36,7 @@ public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K,
     @Override
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public R create(@RequestBody T createRequest) {
+    public R create(@RequestBody @Valid T createRequest) {
         return service.create(createRequest);
     }
 
@@ -52,8 +54,4 @@ public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K,
         service.deleteById(id);
     }
 
-    @GetMapping(value = "/search")
-    public void readBySearchCriteria(SearchFilterDtoRequest searchDtoRequest) {
-        service.readBySearchCriteria(searchDtoRequest);
-    }
 }

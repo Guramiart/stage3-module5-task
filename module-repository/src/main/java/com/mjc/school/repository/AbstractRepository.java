@@ -1,10 +1,8 @@
 package com.mjc.school.repository;
 
+import com.mjc.school.repository.filter.EntityRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,7 +13,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
-import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unchecked")
@@ -31,16 +28,21 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
     }
 
     @Override
-    public Page<T> readAll(Pageable pageable) {
-        Query query = em.createQuery("SELECT e FROM " + entity.getSimpleName() + " e");
-        int pageNumber = pageable.getPageNumber();
-        int pageSize = pageable.getPageSize();
-        query.setFirstResult(pageNumber * pageSize);
-        query.setMaxResults(pageSize);
-        List<T> modelList = query.getResultList();
-        Query queryCount = em.createQuery("SELECT COUNT(*) FROM " + entity.getSimpleName());
-        long count = (long) queryCount.getSingleResult();
-        return new PageImpl<>(modelList, pageable, count);
+    public Page<T> readAll(EntityRequest entityRequest) {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entity);
+        final Root<T> root = criteriaQuery.from(entity);
+        if (entityRequest.searchSpecification() != null) {
+            Predicate predicate = entityRequest.searchSpecification().toPredicate(root, criteriaQuery, criteriaBuilder);
+            criteriaQuery.where(predicate);
+        }
+        TypedQuery<T> typedQuery = em.createQuery(criteriaQuery);
+        int page = entityRequest.pageable().getPageNumber();
+        int size = entityRequest.pageable().getPageSize();
+        typedQuery.setFirstResult((page - 1) * size);
+        typedQuery.setMaxResults(size);
+
+        return new PageImpl<T>(typedQuery.getResultList(), entityRequest.pageable(), size);
     }
 
     @Override
@@ -90,17 +92,4 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         return em.getReference(entity, id);
     }
 
-    @Override
-    @Transactional
-    public List<T> readBySearchCriteria(Specification<Object> specification) {
-        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entity);
-        final Root root = criteriaQuery.from(entity);
-        if (specification != null) {
-            Predicate predicate = specification.toPredicate(root, criteriaQuery, criteriaBuilder);
-            criteriaQuery.where(predicate);
-        }
-        TypedQuery<T> typedQuery = em.createQuery(criteriaQuery);
-        return typedQuery.getResultList();
-    }
 }

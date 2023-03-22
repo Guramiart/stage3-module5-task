@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BaseService<T, R, K, U> {
 
-    List<R> readAll(Pageable pageable);
+    List<R> readAll(SearchFilterDtoRequest searchDtoRequest);
 
     R readById(K id);
 
@@ -16,7 +16,5 @@ public interface BaseService<T, R, K, U> {
     R update(K id, U updateRequest);
 
     void deleteById(K id);
-
-    void readBySearchCriteria(SearchFilterDtoRequest searchFilterDtoRequest);
 
 }

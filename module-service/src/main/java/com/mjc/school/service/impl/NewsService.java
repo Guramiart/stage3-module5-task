@@ -11,6 +11,7 @@ import com.mjc.school.service.dto.CreateNewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
 import com.mjc.school.service.dto.UpdateNewsDtoRequest;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
+import com.mjc.school.service.mapper.BaseSearchMapper;
 import com.mjc.school.service.mapper.NewsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,8 +33,9 @@ public class NewsService
             NewsRepository newsRepository,
             AuthorRepository authorRepository,
             TagRepository tagRepository,
-            NewsMapper mapper) {
-        super(newsRepository);
+            NewsMapper mapper,
+            BaseSearchMapper searchMapper) {
+        super(newsRepository, searchMapper);
         this.mapper = mapper;
         this.newsRepository = newsRepository;
         this.authorRepository = authorRepository;

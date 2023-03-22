@@ -8,6 +8,7 @@ import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
+import com.mjc.school.service.mapper.BaseSearchMapper;
 import com.mjc.school.service.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, L
     private final TagRepository tagRepository;
     private final TagMapper mapper;
     @Autowired
-    public TagService(NewsRepository newsRepository, TagRepository tagRepository, TagMapper mapper) {
-        super(tagRepository);
+    public TagService(NewsRepository newsRepository, TagRepository tagRepository, TagMapper mapper, BaseSearchMapper searchMapper) {
+        super(tagRepository, searchMapper);
         this.newsRepository = newsRepository;
         this.tagRepository = tagRepository;
         this.mapper = mapper;

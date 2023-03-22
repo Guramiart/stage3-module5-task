@@ -31,7 +31,7 @@ public class EntitySpecificationBuilder<T> {
         Specification<T> result = new EntitySpecification<>(params.get(0));
         for (int i = 1; i < params.size(); i++){
             SearchCriteria criteria = params.get(i);
-            result =  SearchOperation.getDataOption(criteria.getDataOption()) == SearchOperation.ALL
+            result =  SearchOperation.getDataOption(criteria.getDataOption()).equals(SearchOperation.ALL)
                     ? Specification.where(result).and(new EntitySpecification<>(criteria))
                     : Specification.where(result).or(new EntitySpecification<>(criteria));
         }

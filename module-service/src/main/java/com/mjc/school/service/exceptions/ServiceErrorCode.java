@@ -8,6 +8,7 @@ public enum ServiceErrorCode {
     TAG_DOES_NOT_EXIST_FOR_NEWS_ID("000005", "Tags not found for news with id %d."),
     COMMENT_ID_DOES_NOT_EXIST("000006", "Comment with id %d does not exist."),
     COMMENT_DOES_NOT_EXIST_FOR_NEWS_ID("000007", "Comments not found for news with id %d."),
+    VALIDATION_ERROR("00008", "Validation error"),
     RESOURCE_NOT_FOUND("000010", "Resource not found");
 
     private final String errorCode;
