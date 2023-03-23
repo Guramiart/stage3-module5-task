@@ -28,7 +28,7 @@ public class NewsRepository extends AbstractRepository<News, Long> {
                 predicates.add(newsTagJoin.get("id").in(request.getTagsIds()));
             }
             if(request.getTags() != null) {
-                predicates.add(newsTagJoin.get("name").in(request.getTagsIds()));
+                predicates.add(newsTagJoin.get("name").in(request.getTags()));
             }
         }
 

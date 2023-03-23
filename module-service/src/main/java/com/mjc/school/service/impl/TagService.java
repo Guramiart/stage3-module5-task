@@ -37,7 +37,9 @@ public class TagService extends AbstractService<TagDtoRequest, TagDtoResponse, L
     @Transactional(readOnly = true)
     public List<TagDtoResponse> readAll(NameSearchDtoRequest searchDtoRequest) {
         Pageable pageable = PageRequest.of(searchDtoRequest.getPage(), searchDtoRequest.getSize());
-        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable).build();
+        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable)
+                .name(searchDtoRequest.getName())
+                .build();
         return modelListToDto(tagRepository.readAll(searchQueryParam).getContent());
     }
 

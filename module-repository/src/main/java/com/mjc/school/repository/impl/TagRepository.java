@@ -21,7 +21,6 @@ public class TagRepository extends AbstractRepository<Tag, Long> {
     @Override
     protected List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<Tag> root, SearchQueryParam request) {
         List<Predicate> predicates = new ArrayList<>();
-
         if(request.getName() != null) {
             predicates.add(criteriaBuilder.like(root.get("name"), "%" + request.getName() + "%"));
         }
