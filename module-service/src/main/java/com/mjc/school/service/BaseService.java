@@ -1,13 +1,10 @@
 package com.mjc.school.service;
 
-import com.mjc.school.service.dto.SearchFilterDtoRequest;
-import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 
-public interface BaseService<T, R, K, U> {
+public interface BaseService<T, R, K, U, P> {
 
-    List<R> readAll(SearchFilterDtoRequest searchDtoRequest);
+    List<R> readAll(P searchDtoRequest);
 
     R readById(K id);
 

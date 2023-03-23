@@ -64,7 +64,7 @@ public class News implements BaseEntity<Long> {
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
-    private static class Builder {
+    public static class Builder {
         private final Long id;
         private final String title;
         private final String content;

@@ -30,7 +30,7 @@ public class Author implements BaseEntity<Long> {
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<News> news;
 
-    private static class Builder {
+    public static class Builder {
         private final Long id;
         private final String name;
         private List<News> news;

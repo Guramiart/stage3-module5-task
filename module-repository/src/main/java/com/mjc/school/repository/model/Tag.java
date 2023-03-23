@@ -28,7 +28,7 @@ public class Tag implements BaseEntity<Long> {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private List<News> news;
 
-    private static class Builder {
+    public static class Builder {
         private final Long id;
         private final String name;
         private List<News> news;

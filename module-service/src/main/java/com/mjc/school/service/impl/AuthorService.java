@@ -4,14 +4,17 @@ package com.mjc.school.service.impl;
 import com.mjc.school.repository.impl.AuthorRepository;
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.Author;
+import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
+import com.mjc.school.service.dto.NameSearchDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.AuthorMapper;
-import com.mjc.school.service.mapper.BaseSearchMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,19 +22,44 @@ import java.util.List;
 
 @Service
 public class AuthorService
-        extends AbstractService<AuthorDtoRequest, AuthorDtoResponse, Long, Author, AuthorDtoRequest> {
+        extends AbstractService<AuthorDtoRequest, AuthorDtoResponse, Long, Author, AuthorDtoRequest, NameSearchDtoRequest> {
 
     private final NewsRepository newsRepository;
     private final AuthorRepository authorRepository;
     private final AuthorMapper mapper;
 
     @Autowired
-    public AuthorService(NewsRepository newsRepository, AuthorRepository authorRepository,
-                         AuthorMapper mapper, BaseSearchMapper searchMapper) {
-        super(authorRepository, searchMapper);
+    public AuthorService(NewsRepository newsRepository, AuthorRepository authorRepository, AuthorMapper mapper) {
+        super(authorRepository);
         this.authorRepository = authorRepository;
         this.newsRepository = newsRepository;
         this.mapper = mapper;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AuthorDtoResponse> readAll(NameSearchDtoRequest searchDtoRequest) {
+        Pageable pageable = PageRequest.of(searchDtoRequest.getPage(), searchDtoRequest.getSize());
+        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable)
+                .name(searchDtoRequest.getName())
+                .build();
+        return modelListToDto(authorRepository.readAll(searchQueryParam).getContent());
+    }
+
+    @Transactional(readOnly = true)
+    public AuthorDtoResponse readByNewsId(Long newsId) {
+        if(!newsRepository.existById(newsId)) {
+            throw new NotFoundException(String.format(
+                    ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST.getErrorMessage(), newsId
+            ));
+        }
+        return authorRepository.readByNewsId(newsId)
+                .map(mapper::modelToDto)
+                .orElseThrow(() -> {
+                    throw new NotFoundException(String.format(
+                            ServiceErrorCode.AUTHOR_DOES_NOT_EXIST_FOR_NEWS_ID.getErrorMessage(), newsId)
+                    );
+                });
     }
 
     @Override
@@ -59,19 +87,4 @@ public class AuthorService
         return mapper.dtoToModel(dto);
     }
 
-    @Transactional(readOnly = true)
-    public AuthorDtoResponse readByNewsId(Long newsId) {
-        if(!newsRepository.existById(newsId)) {
-            throw new NotFoundException(String.format(
-                    ServiceErrorCode.NEWS_ID_DOES_NOT_EXIST.getErrorMessage(), newsId
-            ));
-        }
-        return authorRepository.readByNewsId(newsId)
-                .map(mapper::modelToDto)
-                .orElseThrow(() -> {
-                    throw new NotFoundException(String.format(
-                            ServiceErrorCode.AUTHOR_DOES_NOT_EXIST_FOR_NEWS_ID.getErrorMessage(), newsId)
-                    );
-                });
-    }
 }

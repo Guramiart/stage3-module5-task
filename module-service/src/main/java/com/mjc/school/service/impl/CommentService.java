@@ -3,33 +3,43 @@ package com.mjc.school.service.impl;
 import com.mjc.school.repository.impl.CommentRepository;
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.Comment;
+import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
+import com.mjc.school.service.dto.PageDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
-import com.mjc.school.service.mapper.BaseSearchMapper;
 import com.mjc.school.service.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CommentService
-        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, Comment, CommentDtoRequest> {
+        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, Comment, CommentDtoRequest, PageDtoRequest> {
 
     private final CommentMapper mapper;
     private final CommentRepository commentRepository;
     private final NewsRepository newsRepository;
     @Autowired
-    public CommentService(NewsRepository newsRepository, CommentRepository commentRepository, CommentMapper mapper, BaseSearchMapper searchMapper) {
-        super(commentRepository, searchMapper);
+    public CommentService(NewsRepository newsRepository, CommentRepository commentRepository, CommentMapper mapper) {
+        super(commentRepository);
         this.newsRepository = newsRepository;
         this.commentRepository = commentRepository;
         this.mapper = mapper;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CommentDtoResponse> readAll(PageDtoRequest searchDtoRequest) {
+        Pageable pageable = PageRequest.of(searchDtoRequest.getPage(), searchDtoRequest.getSize());
+        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable).build();
+        return modelListToDto(commentRepository.readAll(searchQueryParam).getContent());
     }
 
     @Override

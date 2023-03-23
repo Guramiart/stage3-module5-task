@@ -1,8 +1,9 @@
 package com.mjc.school.repository;
 
-import com.mjc.school.repository.filter.EntityRequest;
+import com.mjc.school.repository.query.SearchQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,6 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.lang.reflect.ParameterizedType;
+import java.util.List;
 import java.util.Optional;
 
 @SuppressWarnings("unchecked")
@@ -27,23 +29,26 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         entity = (Class<T>) type.getActualTypeArguments()[0];
     }
 
-    @Override
-    public Page<T> readAll(EntityRequest entityRequest) {
+   @Override
+   public Page<T> readAll(SearchQueryParam entityRequest) {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entity);
         final Root<T> root = criteriaQuery.from(entity);
-        if (entityRequest.searchSpecification() != null) {
-            Predicate predicate = entityRequest.searchSpecification().toPredicate(root, criteriaQuery, criteriaBuilder);
-            criteriaQuery.where(predicate);
-        }
+
+        List<Predicate> predicates = getPredicates(criteriaBuilder, root, entityRequest);
+
+        criteriaQuery.select(root).distinct(true).where(predicates.toArray(new Predicate[0]));
         TypedQuery<T> typedQuery = em.createQuery(criteriaQuery);
-        int page = entityRequest.pageable().getPageNumber();
-        int size = entityRequest.pageable().getPageSize();
+        Pageable pageable = entityRequest.getPageable();
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
         typedQuery.setFirstResult((page - 1) * size);
         typedQuery.setMaxResults(size);
 
-        return new PageImpl<T>(typedQuery.getResultList(), entityRequest.pageable(), size);
+        return new PageImpl<T>(typedQuery.getResultList(), pageable, size);
     }
+
+    protected abstract List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<T> root, SearchQueryParam request);
 
     @Override
     public Optional<T> readById(K id) {

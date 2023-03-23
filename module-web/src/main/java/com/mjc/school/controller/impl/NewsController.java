@@ -18,17 +18,27 @@ import java.util.List;
 @RequestMapping(
         value = PathConstant.NEWS_PATH,
         produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-public class NewsController extends AbstractController<CreateNewsDtoRequest, NewsDtoResponse, Long, NewsService, UpdateNewsDtoRequest> {
+public class NewsController
+        extends AbstractController<CreateNewsDtoRequest, NewsDtoResponse, Long, NewsService, UpdateNewsDtoRequest, NewsSearchDtoRequest> {
 
+    private final NewsService newsService;
     private final AuthorService authorService;
     private final TagService tagService;
     private final CommentService commentService;
     @Autowired
-    protected NewsController(NewsService service, AuthorService authorService, TagService tagService, CommentService commentService) {
-        super(service);
+    protected NewsController(NewsService newsService, AuthorService authorService, TagService tagService, CommentService commentService) {
+        super(newsService);
+        this.newsService = newsService;
         this.authorService = authorService;
         this.tagService = tagService;
         this.commentService = commentService;
+    }
+
+    @Override
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<NewsDtoResponse> readAll(NewsSearchDtoRequest searchDtoRequest) {
+        return newsService.readAll(searchDtoRequest);
     }
 
     @GetMapping(value = "/{id}/authors")

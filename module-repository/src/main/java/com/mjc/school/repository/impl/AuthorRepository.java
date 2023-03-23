@@ -2,14 +2,29 @@ package com.mjc.school.repository.impl;
 
 import com.mjc.school.repository.AbstractRepository;
 import com.mjc.school.repository.model.Author;
+import com.mjc.school.repository.query.SearchQueryParam;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class AuthorRepository extends AbstractRepository<Author, Long> {
+
+    @Override
+    public List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<Author> root, SearchQueryParam request) {
+        List<Predicate> predicates = new ArrayList<>();
+        if(request.getName() != null) {
+            predicates.add(criteriaBuilder.like(root.get("name"), "%" + request.getName() + "%"));
+        }
+        return predicates;
+    }
 
     @Override
     protected void updateEntity(Author prevState, Author nextState) {
@@ -39,5 +54,4 @@ public class AuthorRepository extends AbstractRepository<Author, Long> {
             return Optional.empty();
         }
     }
-
 }

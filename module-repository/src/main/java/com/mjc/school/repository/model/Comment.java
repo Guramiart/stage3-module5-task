@@ -46,7 +46,7 @@ public class Comment implements BaseEntity<Long> {
     @JoinColumn(name = "news_id")
     private News news;
 
-    private static class Builder {
+    public static class Builder {
 
         private final Long id;
         private final String content;

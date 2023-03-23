@@ -6,26 +6,29 @@ import com.mjc.school.repository.impl.TagRepository;
 import com.mjc.school.repository.model.Author;
 import com.mjc.school.repository.model.News;
 import com.mjc.school.repository.model.Tag;
+import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.CreateNewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
+import com.mjc.school.service.dto.NewsSearchDtoRequest;
 import com.mjc.school.service.dto.UpdateNewsDtoRequest;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
-import com.mjc.school.service.mapper.BaseSearchMapper;
 import com.mjc.school.service.mapper.NewsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class NewsService
-        extends AbstractService<CreateNewsDtoRequest, NewsDtoResponse, Long, News, UpdateNewsDtoRequest> {
+        extends AbstractService<CreateNewsDtoRequest, NewsDtoResponse, Long, News, UpdateNewsDtoRequest, NewsSearchDtoRequest> {
 
     private final NewsMapper mapper;
     private final NewsRepository newsRepository;
     private final AuthorRepository authorRepository;
-
     private final TagRepository tagRepository;
 
     @Autowired
@@ -33,13 +36,26 @@ public class NewsService
             NewsRepository newsRepository,
             AuthorRepository authorRepository,
             TagRepository tagRepository,
-            NewsMapper mapper,
-            BaseSearchMapper searchMapper) {
-        super(newsRepository, searchMapper);
+            NewsMapper mapper) {
+        super(newsRepository);
         this.mapper = mapper;
         this.newsRepository = newsRepository;
         this.authorRepository = authorRepository;
         this.tagRepository = tagRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<NewsDtoResponse> readAll(NewsSearchDtoRequest searchDtoRequest) {
+        Pageable pageable = PageRequest.of(searchDtoRequest.getPage(), searchDtoRequest.getSize());
+        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable)
+                .title(searchDtoRequest.getTitle())
+                .content(searchDtoRequest.getContent())
+                .author(searchDtoRequest.getAuthor())
+                .tags(searchDtoRequest.getTags())
+                .tagsIds(searchDtoRequest.getTagsIds())
+                .build();
+        return modelListToDto(newsRepository.readAll(searchQueryParam).getContent());
     }
 
     @Override

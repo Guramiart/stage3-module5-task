@@ -1,29 +1,19 @@
 package com.mjc.school.controller;
 
 import com.mjc.school.service.BaseService;
-import com.mjc.school.service.dto.SearchFilterDtoRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
-public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K, U>, U> implements BaseController<T, R, K, U> {
+public abstract class AbstractController<T, R, K, S extends BaseService<T, R, K, U, P>, U,  P>
+        implements BaseController<T, R, K, U, P> {
 
-    private final BaseService<T, R, K, U> service;
+    private final BaseService<T, R, K, U, P> service;
 
     protected AbstractController(S service) {
         this.service = service;
-    }
-
-    @Override
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<R> readAll(SearchFilterDtoRequest searchDtoRequest) {
-        return service.readAll(searchDtoRequest);
     }
 
     @Override
