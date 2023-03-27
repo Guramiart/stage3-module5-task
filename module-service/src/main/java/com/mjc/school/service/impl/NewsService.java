@@ -1,5 +1,6 @@
 package com.mjc.school.service.impl;
 
+import com.mjc.school.repository.exception.SortOperationException;
 import com.mjc.school.repository.impl.AuthorRepository;
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.impl.TagRepository;
@@ -10,17 +11,20 @@ import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.CreateNewsDtoRequest;
 import com.mjc.school.service.dto.NewsDtoResponse;
-import com.mjc.school.service.dto.NewsSearchDtoRequest;
+import com.mjc.school.service.dto.query.NewsSearchDtoRequest;
 import com.mjc.school.service.dto.UpdateNewsDtoRequest;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
+import com.mjc.school.service.exceptions.ServiceException;
 import com.mjc.school.service.mapper.NewsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class NewsService
@@ -54,8 +58,14 @@ public class NewsService
                 .author(searchDtoRequest.getAuthor())
                 .tags(searchDtoRequest.getTags())
                 .tagsIds(searchDtoRequest.getTagsIds())
+                .sortBy(searchDtoRequest.getSortBy())
+                .order(searchDtoRequest.getOrder())
                 .build();
-        return modelListToDto(newsRepository.readAll(searchQueryParam).getContent());
+        try {
+            return modelListToDto(newsRepository.readAll(searchQueryParam).getContent());
+        } catch (SortOperationException ex) {
+            throw new ServiceException(ex.getMessage());
+        }
     }
 
     @Override

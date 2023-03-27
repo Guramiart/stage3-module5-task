@@ -3,6 +3,7 @@ package com.mjc.school.exceptions.handler;
 import com.mjc.school.exceptions.ErrorResponse;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
+import com.mjc.school.service.exceptions.ServiceException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.sql.rowset.serial.SerialException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -34,11 +36,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler({ NotFoundException.class })
-    protected ResponseEntity<Object> handleConflict(NotFoundException ex, WebRequest request) {
+    protected ResponseEntity<Object> handleResourceNotFoundConflict(NotFoundException ex, WebRequest request) {
         return new ResponseEntity<>(new ErrorResponse(
                 ServiceErrorCode.RESOURCE_NOT_FOUND.getErrorCode(),
                 ServiceErrorCode.RESOURCE_NOT_FOUND.getErrorMessage(),
                 ex.getMessage()
         ), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({ ServiceException.class })
+    protected ResponseEntity<Object> handleUnexpectedConflict(ServiceException ex, WebRequest request) {
+        return new ResponseEntity<>(new ErrorResponse(
+                ServiceErrorCode.NOT_SUPPORTED.getErrorCode(),
+                ServiceErrorCode.NOT_SUPPORTED.getErrorMessage(),
+                ex.getMessage()
+        ), HttpStatus.NOT_IMPLEMENTED);
     }
 }

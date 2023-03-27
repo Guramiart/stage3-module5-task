@@ -4,7 +4,8 @@ import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
 import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
-import com.mjc.school.service.dto.PageDtoRequest;
+import com.mjc.school.service.dto.query.PageDtoRequest;
+import com.mjc.school.service.dto.query.SortDtoRequest;
 import com.mjc.school.service.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.List;
         value = PathConstant.COMMENT_PATH,
         produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 public class CommentController
-        extends AbstractController<CommentDtoRequest, CommentDtoResponse, Long, CommentService, CommentDtoRequest, PageDtoRequest> {
+        extends AbstractController<CommentDtoRequest, CommentDtoResponse, Long, CommentService, CommentDtoRequest, SortDtoRequest> {
 
     private final CommentService service;
     @Autowired
@@ -30,7 +31,7 @@ public class CommentController
     @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<CommentDtoResponse> readAll(PageDtoRequest searchDtoRequest) {
+    public List<CommentDtoResponse> readAll(SortDtoRequest searchDtoRequest) {
         return service.readAll(searchDtoRequest);
     }
 }

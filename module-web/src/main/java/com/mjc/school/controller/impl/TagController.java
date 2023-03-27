@@ -2,7 +2,7 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
-import com.mjc.school.service.dto.NameSearchDtoRequest;
+import com.mjc.school.service.dto.query.NameSearchDtoRequest;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import com.mjc.school.service.impl.TagService;

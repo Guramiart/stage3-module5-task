@@ -8,7 +8,7 @@ import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.AuthorDtoRequest;
 import com.mjc.school.service.dto.AuthorDtoResponse;
-import com.mjc.school.service.dto.NameSearchDtoRequest;
+import com.mjc.school.service.dto.query.NameSearchDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.AuthorMapper;

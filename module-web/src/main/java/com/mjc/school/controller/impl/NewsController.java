@@ -3,6 +3,7 @@ package com.mjc.school.controller.impl;
 import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
 import com.mjc.school.service.dto.*;
+import com.mjc.school.service.dto.query.NewsSearchDtoRequest;
 import com.mjc.school.service.impl.AuthorService;
 import com.mjc.school.service.impl.CommentService;
 import com.mjc.school.service.impl.NewsService;

@@ -7,21 +7,23 @@ import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
 import com.mjc.school.service.dto.CommentDtoRequest;
 import com.mjc.school.service.dto.CommentDtoResponse;
-import com.mjc.school.service.dto.PageDtoRequest;
+import com.mjc.school.service.dto.query.SortDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
 import com.mjc.school.service.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService
-        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, Comment, CommentDtoRequest, PageDtoRequest> {
+        extends AbstractService<CommentDtoRequest, CommentDtoResponse, Long, Comment, CommentDtoRequest, SortDtoRequest> {
 
     private final CommentMapper mapper;
     private final CommentRepository commentRepository;
@@ -36,9 +38,12 @@ public class CommentService
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDtoResponse> readAll(PageDtoRequest searchDtoRequest) {
+    public List<CommentDtoResponse> readAll(SortDtoRequest searchDtoRequest) {
         Pageable pageable = PageRequest.of(searchDtoRequest.getPage(), searchDtoRequest.getSize());
-        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable).build();
+        SearchQueryParam searchQueryParam = new SearchQueryParam.Builder(pageable)
+                .sortBy(searchDtoRequest.getSortBy())
+                .order(searchDtoRequest.getOrder())
+                .build();
         return modelListToDto(commentRepository.readAll(searchQueryParam).getContent());
     }
 

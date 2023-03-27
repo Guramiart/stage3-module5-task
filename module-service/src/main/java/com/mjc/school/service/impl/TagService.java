@@ -5,7 +5,7 @@ import com.mjc.school.repository.impl.TagRepository;
 import com.mjc.school.repository.model.Tag;
 import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
-import com.mjc.school.service.dto.NameSearchDtoRequest;
+import com.mjc.school.service.dto.query.NameSearchDtoRequest;
 import com.mjc.school.service.dto.TagDtoRequest;
 import com.mjc.school.service.dto.TagDtoResponse;
 import com.mjc.school.service.exceptions.NotFoundException;

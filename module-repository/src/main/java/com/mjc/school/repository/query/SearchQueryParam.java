@@ -13,6 +13,8 @@ public class SearchQueryParam {
     private String author;
     private List<String> tags;
     private List<Integer> tagsIds;
+    private String sortBy;
+    private String order;
 
     public static class Builder {
         private final Pageable pageable;
@@ -22,6 +24,8 @@ public class SearchQueryParam {
         private String author;
         private List<String> tags;
         private List<Integer> tagsIds;
+        private String sortBy;
+        private String order;
 
         public Builder(Pageable pageable) {
             this.pageable = pageable;
@@ -57,6 +61,16 @@ public class SearchQueryParam {
             return this;
         }
 
+        public Builder sortBy(String sortBy) {
+            this.sortBy = sortBy;
+            return this;
+        }
+
+        public Builder order(String order) {
+            this.order = order;
+            return this;
+        }
+
         public SearchQueryParam build() {
             return new SearchQueryParam(this);
         }
@@ -72,6 +86,8 @@ public class SearchQueryParam {
         name = builder.name;
         tags = builder.tags;
         tagsIds = builder.tagsIds;
+        sortBy = builder.sortBy;
+        order = builder.order;
     }
 
     public Pageable getPageable() {
@@ -100,5 +116,13 @@ public class SearchQueryParam {
 
     public List<Integer> getTagsIds() {
         return tagsIds;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    public String getOrder() {
+        return order;
     }
 }

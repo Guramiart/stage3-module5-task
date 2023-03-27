@@ -1,5 +1,6 @@
 package com.mjc.school.repository;
 
+import com.mjc.school.repository.exception.SortOperationException;
 import com.mjc.school.repository.query.SearchQueryParam;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -9,12 +10,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @SuppressWarnings("unchecked")
@@ -34,9 +33,10 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entity);
         final Root<T> root = criteriaQuery.from(entity);
-
         List<Predicate> predicates = getPredicates(criteriaBuilder, root, entityRequest);
-
+        if(entityRequest.getSortBy() != null) {
+            mapSorting(entityRequest, criteriaQuery, criteriaBuilder, root);
+        }
         criteriaQuery.select(root).distinct(true).where(predicates.toArray(new Predicate[0]));
         TypedQuery<T> typedQuery = em.createQuery(criteriaQuery);
         Pageable pageable = entityRequest.getPageable();
@@ -49,6 +49,18 @@ public abstract class AbstractRepository<T extends BaseEntity<K>, K> implements 
     }
 
     protected abstract List<Predicate> getPredicates(CriteriaBuilder criteriaBuilder, Root<T> root, SearchQueryParam request);
+
+    private void mapSorting(SearchQueryParam request, CriteriaQuery<T> criteriaQuery, CriteriaBuilder criteriaBuilder, Root<T> root) {
+        try {
+            if(Objects.equals(request.getOrder(), "asc")) {
+                criteriaQuery.orderBy(criteriaBuilder.asc(root.get(request.getSortBy())));
+            } else {
+                criteriaQuery.orderBy(criteriaBuilder.desc(root.get(request.getSortBy())));
+            }
+        } catch (IllegalArgumentException ex) {
+            throw new SortOperationException("Sorting by " + request.getSortBy() + " is not supported");
+        }
+    }
 
     @Override
     public Optional<T> readById(K id) {
