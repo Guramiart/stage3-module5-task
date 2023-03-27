@@ -10,6 +10,7 @@ public enum ServiceErrorCode {
     COMMENT_DOES_NOT_EXIST_FOR_NEWS_ID("000007", "Comments not found for news with id %d."),
     VALIDATION_ERROR("00008", "Validation error"),
     RESOURCE_NOT_FOUND("000010", "Resource not found"),
+    API_NOT_SUPPORTED("00050", "Api not supported for accept header"),
     NOT_SUPPORTED("000100", "Operation not supported");
 
     private final String errorCode;

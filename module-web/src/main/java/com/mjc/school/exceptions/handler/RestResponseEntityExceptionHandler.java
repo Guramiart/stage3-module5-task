@@ -8,18 +8,17 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.sql.rowset.serial.SerialException;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
@@ -33,6 +32,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 ServiceErrorCode.VALIDATION_ERROR.getErrorMessage(),
                 details);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex,
+                                                                      HttpHeaders headers, HttpStatus status,
+                                                                      WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                ServiceErrorCode.API_NOT_SUPPORTED.getErrorCode(),
+                ServiceErrorCode.API_NOT_SUPPORTED.getErrorMessage(),
+                ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler({ NotFoundException.class })
