@@ -2,9 +2,8 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
-import com.mjc.school.service.dto.CommentDtoRequest;
-import com.mjc.school.service.dto.CommentDtoResponse;
-import com.mjc.school.service.dto.query.PageDtoRequest;
+import com.mjc.school.service.dto.request.CommentDtoRequest;
+import com.mjc.school.service.dto.response.CommentDtoResponse;
 import com.mjc.school.service.dto.query.SortDtoRequest;
 import com.mjc.school.service.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;

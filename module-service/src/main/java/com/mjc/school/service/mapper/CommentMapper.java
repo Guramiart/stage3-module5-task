@@ -2,8 +2,8 @@ package com.mjc.school.service.mapper;
 
 import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.Comment;
-import com.mjc.school.service.dto.CommentDtoRequest;
-import com.mjc.school.service.dto.CommentDtoResponse;
+import com.mjc.school.service.dto.request.CommentDtoRequest;
+import com.mjc.school.service.dto.response.CommentDtoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;

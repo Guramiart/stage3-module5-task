@@ -2,8 +2,8 @@ package com.mjc.school.controller.impl;
 
 import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
-import com.mjc.school.service.dto.AuthorDtoRequest;
-import com.mjc.school.service.dto.AuthorDtoResponse;
+import com.mjc.school.service.dto.request.AuthorDtoRequest;
+import com.mjc.school.service.dto.response.AuthorDtoResponse;
 import com.mjc.school.service.dto.query.NameSearchDtoRequest;
 import com.mjc.school.service.impl.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;

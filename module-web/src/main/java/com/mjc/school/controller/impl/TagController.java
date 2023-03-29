@@ -1,10 +1,12 @@
 package com.mjc.school.controller.impl;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import com.mjc.school.controller.AbstractController;
 import com.mjc.school.constants.PathConstant;
 import com.mjc.school.service.dto.query.NameSearchDtoRequest;
-import com.mjc.school.service.dto.TagDtoRequest;
-import com.mjc.school.service.dto.TagDtoResponse;
+import com.mjc.school.service.dto.request.TagDtoRequest;
+import com.mjc.school.service.dto.response.TagDtoResponse;
 import com.mjc.school.service.impl.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,8 @@ public class TagController
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<TagDtoResponse> readAll(NameSearchDtoRequest searchDtoRequest) {
-        return service.readAll(searchDtoRequest);
+        List<TagDtoResponse> tags = service.readAll(searchDtoRequest);
+        tags.forEach(t -> t.add(linkTo(methodOn(getClass()).readById(t.getId())).withSelfRel()));
+        return tags;
     }
 }

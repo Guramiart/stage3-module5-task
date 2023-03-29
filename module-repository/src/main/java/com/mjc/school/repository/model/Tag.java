@@ -1,6 +1,7 @@
 package com.mjc.school.repository.model;
 
 import com.mjc.school.repository.BaseEntity;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "tags")
-public class Tag implements BaseEntity<Long> {
+public class Tag extends RepresentationModel<Tag> implements BaseEntity<Long> {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

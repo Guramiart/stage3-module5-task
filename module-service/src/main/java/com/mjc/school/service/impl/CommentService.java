@@ -5,8 +5,8 @@ import com.mjc.school.repository.impl.NewsRepository;
 import com.mjc.school.repository.model.Comment;
 import com.mjc.school.repository.query.SearchQueryParam;
 import com.mjc.school.service.AbstractService;
-import com.mjc.school.service.dto.CommentDtoRequest;
-import com.mjc.school.service.dto.CommentDtoResponse;
+import com.mjc.school.service.dto.request.CommentDtoRequest;
+import com.mjc.school.service.dto.response.CommentDtoResponse;
 import com.mjc.school.service.dto.query.SortDtoRequest;
 import com.mjc.school.service.exceptions.NotFoundException;
 import com.mjc.school.service.exceptions.ServiceErrorCode;
@@ -14,12 +14,10 @@ import com.mjc.school.service.mapper.CommentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class CommentService
