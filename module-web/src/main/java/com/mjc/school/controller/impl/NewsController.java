@@ -18,6 +18,7 @@ import com.mjc.school.service.impl.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,13 @@ public class NewsController
     @Override
     @GetMapping
     @ApiOperation(value = "Retrieve all news", response = CommentDtoResponse.class)
-    @ApiResponse(code = 200, message = "Successfully retrieve news")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieve news"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public List<NewsDtoResponse> readAll(NewsSearchDtoRequest searchDtoRequest) {
         List<NewsDtoResponse> news = newsService.readAll(searchDtoRequest);
         news.forEach(this::mapSelfLinks);
@@ -71,8 +78,14 @@ public class NewsController
     }
 
     @Override
-    @ApiResponse(code = 201, message = "Successfully create new news")
     @ApiOperation(value = "Create new news", response = NewsDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Successfully create new news"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = RestConstants.VERSION_1)
     public NewsDtoResponse create(@RequestBody @Valid CreateNewsDtoRequest createRequest) {
         NewsDtoResponse news =  super.create(createRequest);
@@ -83,7 +96,13 @@ public class NewsController
     @Override
     @GetMapping(value = "/{id}", produces = RestConstants.VERSION_2)
     @ApiOperation(value = "Retrieve specific news by supplied id", response = NewsDtoResponse.class)
-    @ApiResponse(code = 200, message = "Successfully retrieve specific news")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieve specific news"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public NewsDtoResponse readById(@PathVariable Long id) {
         NewsDtoResponse news = super.readById(id);
         mapLinks(news);
@@ -91,7 +110,13 @@ public class NewsController
     }
 
     @Override
-    @ApiResponse(code = 200, message = "Successfully update specific news")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully update specific news"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     @ApiOperation(value = "Update specific news by supplied id", response = NewsDtoResponse.class)
     @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = RestConstants.VERSION_1)
     public NewsDtoResponse update(@PathVariable Long id, @RequestBody @Valid UpdateNewsDtoRequest updateRequest) {
@@ -101,17 +126,29 @@ public class NewsController
     }
 
     @Override
-    @ApiResponse(code = 204, message = "Successfully delete specific news")
     @ApiOperation(value = "Delete specific news by supplied id", response = NewsDtoResponse.class)
     @DeleteMapping(value = "/{id}", produces = RestConstants.VERSION_1)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successfully delete specific news"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public void deleteById(@PathVariable Long id) {
         super.deleteById(id);
     }
 
     @GetMapping(value = "/{id}/authors")
     @ResponseStatus(HttpStatus.OK)
-    @ApiResponse(code = 200, message = "Successfully retrieve specific author by news id")
     @ApiOperation(value = "Retrieve specific news by supplied id", response = AuthorDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieve specific author by news id"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public AuthorDtoResponse readAuthorByNewsId(@PathVariable Long id) {
         AuthorDtoResponse response = authorService.readByNewsId(id);
         response.add(getEntityLinkById(AbstractController.class, response.getId()));
@@ -120,7 +157,13 @@ public class NewsController
 
     @GetMapping(value = "/{id}/tags")
     @ResponseStatus(HttpStatus.OK)
-    @ApiResponse(code = 200, message = "Successfully retrieve specific tags by news id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieve specific tags by news id"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     @ApiOperation(value = "Retrieve specific tags by supplied news id", response = TagDtoResponse.class)
     public List<TagDtoResponse> readTagByNewsId(@PathVariable Long id) {
         List<TagDtoResponse> tags = tagService.readByNewsId(id);
@@ -130,8 +173,14 @@ public class NewsController
 
     @GetMapping(value = "/{id}/comments")
     @ResponseStatus(HttpStatus.OK)
-    @ApiResponse(code = 200, message = "Successfully retrieve specific comments by news id")
     @ApiOperation(value = "Retrieve specific comments by news id", response = CommentDtoResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieve specific comments by news id"),
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     public List<CommentDtoResponse> readCommentByNewsId(@PathVariable Long id) {
         List<CommentDtoResponse> comments = commentService.readByNewsId(id);
         comments.forEach(c -> c.add(getEntityLinkById(CommentController.class, c.getId())));
