@@ -2,12 +2,13 @@ package com.mjc.school.controller;
 
 import com.mjc.school.service.BaseService;
 import com.mjc.school.service.dto.response.ResponseEntity;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -15,46 +16,72 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @SuppressWarnings("unchecked")
 public abstract class AbstractController<T, R extends ResponseEntity<K>, K, S extends BaseService<T, R, K, U, P>, U,  P>
         implements BaseController<T, R, K, U, P> {
-
-    private final String VERSION_1 = "application/vnd.jcg.app-1.0+json";
-    private final String VERSION_2 = "application/vnd.jcg.app-2.0+json";
     private final BaseService<T, R, K, U, P> service;
 
     protected AbstractController(S service) {
         this.service = service;
     }
 
-    @Override
-    @GetMapping(value = "/{id}", produces = VERSION_2)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
     @ResponseStatus(HttpStatus.OK)
-    public R readById(@PathVariable K id) {
+    public abstract List<R> readAll(P searchRequest);
+
+    @Override
+    @ResponseStatus(HttpStatus.OK)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
+    public R readById(K id) {
         R response = service.readById(id);
         response.add(getLink(id));
         return response;
     }
 
     @Override
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = VERSION_1)
     @ResponseStatus(HttpStatus.CREATED)
-    public R create(@RequestBody @Valid T createRequest) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
+    public R create(T createRequest) {
         R response = service.create(createRequest);
         response.add(getLink(response.getId()));
         return response;
     }
 
     @Override
-    @PatchMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = VERSION_1)
     @ResponseStatus(HttpStatus.OK)
-    public R update(@PathVariable K id, @RequestBody U updateRequest) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
+    public R update(K id, U updateRequest) {
         R response = service.update(id, updateRequest);
         response.add(getLink(id));
         return response;
     }
 
     @Override
-    @DeleteMapping(value = "/{id}", produces = VERSION_1)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteById(@PathVariable K id) {
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "You are not authorized to view the resource"),
+            @ApiResponse(code = 403, message = "Accessing the resource you were trying to reach is forbidden"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found"),
+            @ApiResponse(code = 500, message = "Application failed to process the request")
+    })
+    public void deleteById(K id) {
         service.deleteById(id);
     }
 
